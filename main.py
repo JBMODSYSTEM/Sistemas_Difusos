@@ -1,4 +1,4 @@
-class FuncionPertenencia:
+class FuncionPertenenciaTriangular:
 	"""Representa una función de pertenencia triangular."""
 
 	def __init__(self, a, b, c):
@@ -17,6 +17,11 @@ class FuncionPertenencia:
 			return (self.c - x) / (self.c - self.b)
 		return 0.0
 
+# Función para mostrar los resultados de evaluación de la función de pertenencia para un conjunto de valores.
+def mostrar_resultados(funcion, nombre, valores):
+	print(f"\nResultados para {nombre} (a={funcion.a}, b={funcion.b}, c={funcion.c}):")
+	for valor in valores:
+		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
 class FuncionPertenenciaTrapezoidal:
 	"""Representa una función de pertenencia trapezoidal."""
@@ -39,12 +44,6 @@ class FuncionPertenenciaTrapezoidal:
 		if self.c <= x < self.d:
 			return (self.d - x) / (self.d - self.c)
 		return 0.0
-
-# Función para mostrar los resultados de evaluación de la función de pertenencia para un conjunto de valores.
-def mostrar_resultados(funcion, nombre, valores):
-	print(f"\nResultados para {nombre} (a={funcion.a}, b={funcion.b}, c={funcion.c}):")
-	for valor in valores:
-		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
 
 def mostrar_resultados_trapezoidal(funcion, nombre, valores):
@@ -70,8 +69,8 @@ def obtener_valores_usuario():
 
 if __name__ == "__main__":
 	# Se crean dos objetos con parámetros distintos para comparar su comportamiento.
-	fp1 = FuncionPertenencia(0, 5, 10)
-	fp2 = FuncionPertenencia(5, 10, 15)
+	fp1 = FuncionPertenenciaTriangular(0, 5, 10)
+	fp2 = FuncionPertenenciaTriangular(5, 10, 15)
 	fp_trap = FuncionPertenenciaTrapezoidal(0, 5, 10, 15)
 
 	valores = obtener_valores_usuario()
