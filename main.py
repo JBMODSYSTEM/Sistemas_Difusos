@@ -75,8 +75,29 @@ class FuncionPertenenciaGaussiana:
 		# Implementa la función gaussiana usando la fórmula estándar.
 		return math.exp(-0.5 * ((x - self.c) / self.sigma) ** 2)
 	
+
 def mostrar_resultados_gaussiana(funcion, nombre, valores):
 	print(f"\nResultados para {nombre} (c={funcion.c}, sigma={funcion.sigma}):")
+	for valor in valores:
+		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
+
+
+class FuncionPertenenciaCampanaGeneralizada:
+	"""Representa una función de pertenencia de campana generalizada."""
+
+	def __init__(self, a, b, c):
+		# a controla la pendiente, b es el centro y c controla el ancho de la campana.
+		self.a = a
+		self.b = b
+		self.c = c
+
+	def evaluar(self, x):
+		# Implementa la función de campana generalizada usando la fórmula estándar.
+		return 1 / (1 + abs((x - self.b) / self.a) ** (2 * self.c))
+	
+
+def mostrar_resultados_campana(funcion, nombre, valores):
+	print(f"\nResultados para {nombre} (a={funcion.a}, b={funcion.b}, c={funcion.c}):")
 	for valor in valores:
 		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
@@ -96,16 +117,17 @@ def obtener_valores_usuario():
 
 
 if __name__ == "__main__":
-	# Se crean dos objetos con parámetros distintos para comparar su comportamiento.
+	# Se crean instancias de cada tipo de función de pertenencia con parámetros específicos, se obtienen los valores del usuario
 	fp1 = FuncionPertenenciaTriangular(0, 5, 10)
 	fp2 = FuncionPertenenciaTriangular(5, 10, 15)
 	fp_trap = FuncionPertenenciaTrapezoidal(0, 5, 10, 15)
 	fp_gauss = FuncionPertenenciaGaussiana(10, 2)
+	fp_campana = FuncionPertenenciaCampanaGeneralizada(5, 10, 2)
 	valores = obtener_valores_usuario()
 
+	# Se muestran los resultados de evaluación de cada función de pertenencia para los valores ingresados por el usuario.
 	mostrar_resultados(fp1, "fp1", valores)
 	mostrar_resultados(fp2, "fp2", valores)
 	mostrar_resultados_trapezoidal(fp_trap, "fp_trap", valores)
 	mostrar_resultados_gaussiana(fp_gauss, "fp_gauss", valores)
-
-
+	mostrar_resultados_campana(fp_campana, "fp_campana", valores)
