@@ -79,3 +79,4 @@ if __name__ == "__main__":
 	mostrar_resultados(fp1, "fp1", valores)
 	mostrar_resultados(fp2, "fp2", valores)
 	mostrar_resultados_trapezoidal(fp_trap, "fp_trap", valores)
+
