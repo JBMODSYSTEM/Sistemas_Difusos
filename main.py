@@ -63,6 +63,9 @@ def mostrar_resultados_trapezoidal(funcion, nombre, valores):
 		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
 
+'''La clase FuncionPertenenciaGaussiana tiene un método evaluar que calcula el grado de 
+pertenencia de un valor x según la forma gaussiana definida por el centro c y el ancho sigma.'''
+
 class FuncionPertenenciaGaussiana:
 	"""Representa una función de pertenencia gaussiana."""
 
@@ -121,6 +124,32 @@ def mostrar_resultados_sigmoidal(funcion, nombre, valores):
 		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
 
+class FuncionPertenencia_S:
+	"""Representa una función de pertenencia en forma de S."""
+
+	def __init__(self, a, b):
+		# a es el punto donde la función comienza a aumentar y b es el punto donde alcanza su valor máximo.
+		self.a = a
+		self.b = b
+
+	def evaluar(self, x):
+		# Implementa la función en forma de S usando la fórmula estándar.
+		if x <= self.a:
+			return 0.0
+		if self.a < x <= (self.a + self.b) / 2:
+			return 2 * ((x - self.a) / (self.b - self.a)) ** 2
+		if (self.a + self.b) / 2 < x < self.b:
+			return 1 - 2 * ((x - self.b) / (self.b - self.a)) ** 2
+		return 1.0
+
+
+def mostrar_resultados_S(funcion, nombre, valores):
+	print(f"\nResultados para {nombre} (a={funcion.a}, b={funcion.b}):")
+	for valor in valores:
+		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
+
+
+
 
 def obtener_valores_usuario():
 	# Permite ingresar varios valores separados por coma, ademas si no se ingresa nada, se usan valores por defecto.
@@ -145,6 +174,7 @@ if __name__ == "__main__":
 	fp_gauss = FuncionPertenenciaGaussiana(10, 2)
 	fp_campana = FuncionPertenenciaCampanaGeneralizada(5, 10, 2)
 	fp_sigmoidal = FuncionPertenenciaSigmoidal(1, 10)
+	fp_S = FuncionPertenencia_S(0, 10)
 	valores = obtener_valores_usuario()
 
 	# Se muestran los resultados de evaluación de cada función de pertenencia para los valores ingresados por el usuario.
@@ -154,3 +184,4 @@ if __name__ == "__main__":
 	mostrar_resultados_gaussiana(fp_gauss, "fp_gauss", valores)
 	mostrar_resultados_campana(fp_campana, "fp_campana", valores)
 	mostrar_resultados_sigmoidal(fp_sigmoidal, "fp_sigmoidal", valores)
+	mostrar_resultados_S(fp_S, "fp_S", valores)
