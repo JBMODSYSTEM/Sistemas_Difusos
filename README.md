@@ -39,8 +39,8 @@ $$
 
 ### Ejemplo de uso
 ```python
-fp1 = FuncionPertenenciaTriangular(0, 5, 10)
-fp2 = FuncionPertenenciaTriangular(5, 10, 15)
+fp1_tri = FuncionPertenenciaTriangular(0, 5, 10)
+fp2_tri = FuncionPertenenciaTriangular(5, 10, 15)
 ```
 
 ---
@@ -140,10 +140,110 @@ fp_campana = FuncionPertenenciaCampanaGeneralizada(5, 10, 2)
 
 ---
 
+## 5. Función Sigmoidal
+La clase `FuncionPertenenciaSigmoidal` modela una función sigmoidal (logística), útil para transiciones suaves y no simétricas.
+
+### Atributos utilizados
+- `a`: controla la pendiente (pendiente mayor → transición más pronunciada).
+- `c`: punto de inflexión (valor donde la pertenencia es 0.5).
+
+### Fórmula matemática
+
+$$
+\mu_{\text{sigmoidal}}(x) = \frac{1}{1 + e^{-a (x - c)}}
+$$
+
+### Ejemplo de uso
+```python
+fp_sigmoidal = FuncionPertenenciaSigmoidal(1, 10)
+```
+
+---
+
+## 6. Función S
+La función `S` (clase `FuncionPertenencia_S`) es un caso especial de transición monótona que crece desde 0 hasta 1 en un intervalo [a, b].
+
+### Atributos utilizados
+- `a`: inicio de la subida.
+- `b`: fin de la subida (cuando la pertenencia alcanza 1).
+
+### Fórmula matemática
+
+$$
+\mu_{\text{S}}(x) =
+\begin{cases}
+0, & x \le a \\
+2 \left(\frac{x-a}{b-a}\right)^2, & a < x \le \frac{a+b}{2} \\
+1 - 2 \left(\frac{x-b}{b-a}\right)^2, & \frac{a+b}{2} < x < b \\
+1, & x \ge b
+\end{cases}
+$$
+
+### Ejemplo de uso
+```python
+fp_S = FuncionPertenencia_S(0, 10)
+```
+
+---
+
+## 7. Función Z
+La función `Z` (clase `FuncionPertenencia_Z`) es el espejo inverso de la `S`: decrece desde 1 hasta 0 en el intervalo [a, b].
+
+### Atributos utilizados
+- `a`: inicio de la caída.
+- `b`: fin de la caída (cuando la pertenencia alcanza 0).
+
+### Fórmula matemática
+
+$$
+\mu_{\text{Z}}(x) =
+\begin{cases}
+1, & x \le a \\
+1 - 2 \left(\frac{x-a}{b-a}\right)^2, & a < x \le \frac{a+b}{2} \\
+2 \left(\frac{x-b}{b-a}\right)^2, & \frac{a+b}{2} < x < b \\
+0, & x \ge b
+\end{cases}
+$$
+
+### Ejemplo de uso
+```python
+fp_Z = FuncionPertenencia_Z(0, 10)
+```
+
+---
+
+## 8. Función Pi
+La función `Pi` combina una subida `S` y una bajada `Z` para formar una función con una región central de pertenencia alta similar a una "Pi" (π) invertida.
+
+### Atributos utilizados
+- `a`, `b`, `c`, `d`: definen los puntos de transición (a < b < c < d).
+
+### Fórmula matemática
+
+$$
+\mu_{\text{Pi}}(x) =
+\begin{cases}
+0, & x \le a \\
+2 \left(\frac{x-a}{b-a}\right)^2, & a < x \le \frac{a+b}{2} \\
+1 - 2 \left(\frac{x-b}{b-a}\right)^2, & \frac{a+b}{2} < x \le b \\
+1, & b \le x \le c \\
+1 - 2 \left(\frac{x-c}{d-c}\right)^2, & c < x \le \frac{c+d}{2} \\
+2 \left(\frac{x-d}{d-c}\right)^2, & \frac{c+d}{2} < x < d \\
+0, & x \ge d
+\end{cases}
+$$
+
+### Ejemplo de uso
+```python
+fp_Pi = FuncionPertenenciaPi(0, 5, 10, 15)
+```
+
+---
+
 ## Objetos creados en el programa
 En el programa principal se crean las siguientes instancias:
-- `fp1 = FuncionPertenenciaTriangular(0, 5, 10)`
-- `fp2 = FuncionPertenenciaTriangular(5, 10, 15)`
+- `fp1_tri = FuncionPertenenciaTriangular(0, 5, 10)`
+- `fp2_tri = FuncionPertenenciaTriangular(5, 10, 15)`
 - `fp_trap = FuncionPertenenciaTrapezoidal(0, 5, 10, 15)`
 - `fp_gauss = FuncionPertenenciaGaussiana(10, 2)`
 - `fp_campana = FuncionPertenenciaCampanaGeneralizada(5, 10, 2)`
@@ -165,69 +265,98 @@ El programa evaluará todos los valores ingresados en cada una de las cinco func
 Se ejecutó el programa con el siguiente rango de datos:
 
 **Rango de datos:** `0, 2.5, 5, 7.5, 10, 12.5, 15`
-
 ### Resultados obtenidos
 
-#### Función Triangular fp1 (a=0, b=5, c=10):
-| x | Pertenencia |
-|---|---|
-| 0.0 | 0.00 |
-| 2.5 | 0.50 |
-| 5.0 | 1.00 |
-| 7.5 | 0.50 |
-| 10.0 | 0.00 |
-| 12.5 | 0.00 |
-| 15.0 | 0.00 |
+```
+Resultados para fp1_tri (a=0, b=5, c=10):
+	x =     0 -> pertenencia = 0.00
+	x =   2.5 -> pertenencia = 0.50
+	x =     5 -> pertenencia = 1.00
+	x =   7.5 -> pertenencia = 0.50
+	x =    10 -> pertenencia = 0.00
+	x =  12.5 -> pertenencia = 0.00
+	x =    15 -> pertenencia = 0.00
 
-#### Función Triangular fp2 (a=5, b=10, c=15):
-| x | Pertenencia |
-|---|---|
-| 0.0 | 0.00 |
-| 2.5 | 0.00 |
-| 5.0 | 0.00 |
-| 7.5 | 0.50 |
-| 10.0 | 1.00 |
-| 12.5 | 0.50 |
-| 15.0 | 0.00 |
+Resultados para fp2_tri (a=5, b=10, c=15):
+	x =     0 -> pertenencia = 0.00
+	x =   2.5 -> pertenencia = 0.00
+	x =     5 -> pertenencia = 0.00
+	x =   7.5 -> pertenencia = 0.50
+	x =    10 -> pertenencia = 1.00
+	x =  12.5 -> pertenencia = 0.50
+	x =    15 -> pertenencia = 0.00
 
-#### Función Trapezoidal fp_trap (a=0, b=5, c=10, d=15):
-| x | Pertenencia |
-|---|---|
-| 0.0 | 0.00 |
-| 2.5 | 0.50 |
-| 5.0 | 1.00 |
-| 7.5 | 1.00 |
-| 10.0 | 1.00 |
-| 12.5 | 0.50 |
-| 15.0 | 0.00 |
+Resultados para fp_trap (a=0, b=5, c=10, d=15):
+	x =     0 -> pertenencia = 0.00
+	x =   2.5 -> pertenencia = 0.50
+	x =     5 -> pertenencia = 1.00
+	x =   7.5 -> pertenencia = 1.00
+	x =    10 -> pertenencia = 1.00
+	x =  12.5 -> pertenencia = 0.50
+	x =    15 -> pertenencia = 0.00
 
-#### Función Gaussiana fp_gauss (c=10, sigma=2):
-| x | Pertenencia |
-|---|---|
-| 0.0 | 0.00 |
-| 2.5 | 0.00 |
-| 5.0 | 0.04 |
-| 7.5 | 0.46 |
-| 10.0 | 1.00 |
-| 12.5 | 0.46 |
-| 15.0 | 0.04 |
+Resultados para fp_gauss (c=10, sigma=2):
+	x =     0 -> pertenencia = 0.00
+	x =   2.5 -> pertenencia = 0.00
+	x =     5 -> pertenencia = 0.04
+	x =   7.5 -> pertenencia = 0.46
+	x =    10 -> pertenencia = 1.00
+	x =  12.5 -> pertenencia = 0.46
+	x =    15 -> pertenencia = 0.04
 
-#### Función Campana Generalizada fp_campana (a=5, b=10, c=2):
-| x | Pertenencia |
-|---|---|
-| 0.0 | 0.06 |
-| 2.5 | 0.16 |
-| 5.0 | 0.50 |
-| 7.5 | 0.94 |
-| 10.0 | 1.00 |
-| 12.5 | 0.94 |
-| 15.0 | 0.50 |
+Resultados para fp_campana (a=5, b=10, c=2):
+	x =     0 -> pertenencia = 0.06
+	x =   2.5 -> pertenencia = 0.16
+	x =     5 -> pertenencia = 0.50
+	x =   7.5 -> pertenencia = 0.94
+	x =    10 -> pertenencia = 1.00
+	x =  12.5 -> pertenencia = 0.94
+	x =    15 -> pertenencia = 0.50
+
+Resultados para fp_sigmoidal (a=1, c=10):
+	x =     0 -> pertenencia = 0.00
+	x =   2.5 -> pertenencia = 0.00
+	x =     5 -> pertenencia = 0.01
+	x =   7.5 -> pertenencia = 0.08
+	x =    10 -> pertenencia = 0.50
+	x =  12.5 -> pertenencia = 0.92
+	x =    15 -> pertenencia = 0.99
+
+Resultados para fp_S (a=0, b=10):
+	x =     0 -> pertenencia = 0.00
+	x =   2.5 -> pertenencia = 0.12
+	x =     5 -> pertenencia = 0.50
+	x =   7.5 -> pertenencia = 0.88
+	x =    10 -> pertenencia = 1.00
+	x =  12.5 -> pertenencia = 1.00
+	x =    15 -> pertenencia = 1.00
+
+Resultados para fp_Z (a=0, b=10):
+	x =     0 -> pertenencia = 1.00
+	x =   2.5 -> pertenencia = 0.88
+	x =     5 -> pertenencia = 0.50
+	x =   7.5 -> pertenencia = 0.12
+	x =    10 -> pertenencia = 0.00
+	x =  12.5 -> pertenencia = 0.00
+	x =    15 -> pertenencia = 0.00
+
+Resultados para fp_Pi (a=0, b=5, c=10, d=15):
+	x =     0 -> pertenencia = 0.00
+	x =   2.5 -> pertenencia = 0.20
+	x =     5 -> pertenencia = 1.00
+	x =   7.5 -> pertenencia = 1.00
+	x =    10 -> pertenencia = 1.00
+	x =  12.5 -> pertenencia = 0.80
+	x =    15 -> pertenencia = 0.00
+```
 
 ### Análisis de resultados
-- Las funciones triangulares (fp1 y fp2) muestran transiciones lineales con máxima pertenencia en sus puntos centrales (5 y 10 respectivamente).
-- La función trapezoidal (fp_trap) mantiene pertenencia total (1.0) en el intervalo [5, 10], mostrando la característica distintiva de esta forma.
-- La función gaussiana (fp_gauss) presenta una transición suave con máximo en x=10 y decrece gradualmente en ambas direcciones.
-- La función de campana generalizada (fp_campana) tiene el máximo en x=10 y muestra transiciones más suaves y simétricas que la gaussiana.
+- Las funciones triangulares (`fp1_tri`, `fp2_tri`) muestran transiciones lineales con máxima pertenencia en sus puntos centrales (5 y 10 respectivamente).
+- La función trapezoidal (`fp_trap`) mantiene pertenencia total (1.0) en el intervalo [5, 10], mostrando la característica distintiva de esta forma.
+- La función gaussiana (`fp_gauss`) presenta una transición suave con máximo en x=10 y decrece gradualmente en ambas direcciones.
+- La función de campana generalizada (`fp_campana`) tiene el máximo en x=10 y muestra transiciones más suaves y simétricas que la gaussiana.
+- Las funciones sigmoidal, S y Z modelan transiciones monótonas o inversas útiles para límites suaves.
+- La función Pi (`fp_Pi`) combina características trapezoidales y simétricas, mostrando alta pertenencia en el intervalo central.
 
 ## Conclusión
 Este proyecto implementa cuatro tipos diferentes de funciones de pertenencia, permitiendo comparar cómo distintas formas matemáticas representan el concepto de pertenencia parcial en lógica difusa. Cada función tiene características particulares que la hacen más adecuada para diferentes aplicaciones:
