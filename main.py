@@ -101,6 +101,27 @@ def mostrar_resultados_campana(funcion, nombre, valores):
 	for valor in valores:
 		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
+
+class FuncionPertenenciaSigmoidal:
+	"""Representando una función de pertenencia sigmoidal."""
+	
+	def __init__(self, a, c):
+		# a controla la pendiente y c es el punto de inflexión de la función sigmoidal.
+		self.a = a
+		self.c = c
+
+	def evaluar(self, x):
+		# Implementa la función sigmoidal usando la fórmula estándar.
+		return 1 / (1 + math.exp(-self.a * (x - self.c)))
+
+
+def mostrar_resultados_sigmoidal(funcion, nombre, valores):
+	print(f"\nResultados para {nombre} (a={funcion.a}, c={funcion.c}):")
+	for valor in valores:
+		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
+
+
+
 def obtener_valores_usuario():
 	# Permite ingresar varios valores separados por coma, ademas si no se ingresa nada, se usan valores por defecto.
 	entrada = input("Ingresa valores de entrada separados por coma (por ejemplo: 0, 2.5, 5, 7.5): ").strip()
@@ -118,16 +139,18 @@ def obtener_valores_usuario():
 
 if __name__ == "__main__":
 	# Se crean instancias de cada tipo de función de pertenencia con parámetros específicos, se obtienen los valores del usuario
-	fp1 = FuncionPertenenciaTriangular(0, 5, 10)
-	fp2 = FuncionPertenenciaTriangular(5, 10, 15)
+	fp1_tri = FuncionPertenenciaTriangular(0, 5, 10)
+	fp2_tri = FuncionPertenenciaTriangular(5, 10, 15)
 	fp_trap = FuncionPertenenciaTrapezoidal(0, 5, 10, 15)
 	fp_gauss = FuncionPertenenciaGaussiana(10, 2)
 	fp_campana = FuncionPertenenciaCampanaGeneralizada(5, 10, 2)
+	fp_sigmoidal = FuncionPertenenciaSigmoidal(1, 10)
 	valores = obtener_valores_usuario()
 
 	# Se muestran los resultados de evaluación de cada función de pertenencia para los valores ingresados por el usuario.
-	mostrar_resultados(fp1, "fp1", valores)
-	mostrar_resultados(fp2, "fp2", valores)
+	mostrar_resultados(fp1_tri, "fp1_tri", valores)
+	mostrar_resultados(fp2_tri, "fp2_tri", valores)
 	mostrar_resultados_trapezoidal(fp_trap, "fp_trap", valores)
 	mostrar_resultados_gaussiana(fp_gauss, "fp_gauss", valores)
 	mostrar_resultados_campana(fp_campana, "fp_campana", valores)
+	mostrar_resultados_sigmoidal(fp_sigmoidal, "fp_sigmoidal", valores)
