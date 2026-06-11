@@ -174,6 +174,39 @@ def mostrar_resultados_Z(funcion, nombre, valores):
 		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
 
+class FuncionPertenenciaPi:
+	"""Representa una función de pertenencia en forma de Pi."""
+
+	def __init__(self, a, b, c, d):
+		# a y d controlan las pendientes, mientras que b y c definen el intervalo donde la función alcanza su valor máximo.
+		self.a = a
+		self.b = b
+		self.c = c
+		self.d = d
+
+	def evaluar(self, x):
+		# Implementa la función en forma de Pi usando la fórmula estándar.
+		if x <= self.a:
+			return 0.0
+		if self.a < x <= (self.a + self.b) / 2:
+			return 2 * (x - self.a) / (self.b - self.a)** 2
+		if (self.a + self.b) / 2 < x <= self.b:
+			return 1 - 2 * (x - self.b) / (self.b - self.a)** 2
+		if self.b <= x <= self.c:
+			return 1.0
+		if self.c < x <= (self.c + self.d) / 2:
+			return 1 - 2 * (x - self.c) / (self.d - self.c)** 2
+		if (self.c + self.d) / 2 < x < self.d:
+			return 2 * (x - self.d) / (self.d - self.c)** 2
+		return 0.0
+
+
+def mostrar_resultados_Pi(funcion, nombre, valores):
+	print(f"\nResultados para {nombre} (a={funcion.a}, b={funcion.b}, c={funcion.c}, d={funcion.d}):")
+	for valor in valores:
+		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
+
+
 
 
 def obtener_valores_usuario():
@@ -201,6 +234,7 @@ if __name__ == "__main__":
 	fp_sigmoidal = FuncionPertenenciaSigmoidal(1, 10)
 	fp_S = FuncionPertenencia_S(0, 10)
 	fp_Z = FuncionPertenencia_Z(0, 10)
+	fp_Pi = FuncionPertenenciaPi(0, 5, 10, 15)
 	valores = obtener_valores_usuario()
 
 	# Se muestran los resultados de evaluación de cada función de pertenencia para los valores ingresados por el usuario.
@@ -212,3 +246,4 @@ if __name__ == "__main__":
 	mostrar_resultados_sigmoidal(fp_sigmoidal, "fp_sigmoidal", valores)
 	mostrar_resultados_S(fp_S, "fp_S", valores)
 	mostrar_resultados_Z(fp_Z, "fp_Z", valores)
+	mostrar_resultados_Pi(fp_Pi, "fp_Pi", valores)
