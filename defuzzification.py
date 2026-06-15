@@ -143,3 +143,29 @@ def evaluar_reglas(grados_comida, grados_servicio):
         "buena": evaluar_grupo_reglas(REGLAS_BUENA, grados_comida, grados_servicio),
         "excelente": evaluar_grupo_reglas(REGLAS_EXCELENTE, grados_comida, grados_servicio),
     }
+
+# Funcion para calcular el valor nitido usando un promedio ponderado de salidas singleton.
+def defuzzificar_por_promedio_ponderado(agregados, valores_salida = None):
+    if valores_salida is None:
+        valores_salida = VALORES_SALIDA
+    
+    # Numerador acumula la suma de valor_salida * grado para cada etiqueta, mientras que denominador acumula la suma de los grados.
+    numerador = 0.0
+    denominador = 0.0
+
+    # Iteramos sobre cada etiqueta de propina y su grado de activación, multiplicando el valor numérico asociado a esa etiqueta 
+    # por su grado y sumándolo al numerador, mientras que el grado se suma al denominador.
+    for etiqueta, grado in agregados.items():
+        valor_salida = valores_salida[etiqueta]
+        numerador += valor_salida * grado
+        denominador += grado
+
+    # Si el denominador es cero, significa que no se activó ninguna regla, por lo que devolvemos un valor por defecto (0.0).
+    if denominador == 0.0:
+        return 0.0
+
+    # De lo contrario, calculamos el promedio ponderado dividiendo el numerador por el denominador.
+    # El resultado es un valor nitido que representa la propina recomendada basada en las reglas difusas y sus grados de activación.
+    # valor_nitido = sum(valor_salida_i * grado_i) / sum(grado_i)
+    return numerador / denominador
+
