@@ -1,11 +1,13 @@
 """Base de 25 reglas difusas para el problema de propinas."""
 
-
+# Calidad de la comida (CC) y calidad del servicio (CS) son las variables de entrada.
 CALIDAD = {
 	"CC": "Calidad de la Comida",
 	"CS": "Calidad del Servicio",
 }
 
+
+# Funciones de pertenencia para cada etiqueta difusa de calidad del servicio.
 SERVICIO = {
 	"mms": "muy mal servicio",
 	"ms": "mal servicio",
@@ -14,6 +16,8 @@ SERVICIO = {
 	"mbs": "muy buen servicio",
 }
 
+
+# Funciones de pertenencia para cada etiqueta difusa de calidad de comida y servicio.
 COMIDA = {
 	"mmc": "muy mala comida",
 	"mc": "mala comida",
@@ -22,6 +26,8 @@ COMIDA = {
 	"mbc": "muy buena comida",
 }
 
+
+# Valores de salida para cada etiqueta difusa de propina, usados en defuzzificación.
 PROPINAS = {
 	"n": "nada",
 	"p": "poca",
@@ -31,6 +37,7 @@ PROPINAS = {
 }
 
 
+# Reglas difusas para Nada de Propina: cada tupla representa una regla con su etiqueta, calidad de comida y calidad de servicio.
 REGLAS_NADA = [
 	("R1", "mmc", "mms"),
 	("R2", "mmc", "ms"),
@@ -40,6 +47,8 @@ REGLAS_NADA = [
 	("R6", "rc", "ms"),
 ]
 
+
+# Reglas difusas para Poca Propina: cada tupla representa una regla con su etiqueta, calidad de comida y calidad de servicio.
 REGLAS_POCA = [
 	("R7", "mmc", "rs"),
 	("R8", "mmc", "bs"),
@@ -52,6 +61,8 @@ REGLAS_POCA = [
 	("R15", "mbc", "mms"),
 ]
 
+
+# Reglas difusas para Regular Propina: cada tupla representa una regla con su etiqueta, calidad de comida y calidad de servicio.
 REGLAS_REGULAR = [
 	("R16", "mc", "mbs"),
 	("R17", "rc", "bs"),
@@ -62,15 +73,21 @@ REGLAS_REGULAR = [
 	("R22", "mbc", "rs"),
 ]
 
+
+# Reglas difusas para Buena Propina: cada tupla representa una regla con su etiqueta, calidad de comida y calidad de servicio.
 REGLAS_BUENA = [
 	("R23", "bc", "mbs"),
 	("R24", "mbc", "bs"),
 ]
 
+
+# Reglas difusas para Excelente Propina: cada tupla representa una regla con su etiqueta, calidad de comida y calidad de servicio.
 REGLAS_EXCELENTE = [
 	("R25", "mbc", "mbs"),
 ]
 
+
+# Agrupamos las reglas por salida para facilitar su evaluación.
 REGLAS_POR_SALIDA = {
 	"nada": REGLAS_NADA,
 	"poca": REGLAS_POCA,
@@ -79,6 +96,8 @@ REGLAS_POR_SALIDA = {
 	"excelente": REGLAS_EXCELENTE,
 }
 
+
+# Tabla de propinas que relaciona cada combinación de calidad de comida y servicio con una etiqueta de propina.
 TABLA_PROPINAS = {
 	"mmc": {"mms": "n", "ms": "n", "rs": "p", "bs": "p", "mbs": "p"},
 	"mc": {"mms": "n", "ms": "n", "rs": "p", "bs": "p", "mbs": "r"},
@@ -88,6 +107,7 @@ TABLA_PROPINAS = {
 }
 
 
+# Valores numéricos asociados a cada etiqueta de propina, usados para la defuzzificación por promedio ponderado.
 VALORES_SALIDA = {
 	"nada": 0.0,
 	"poca": 2.5,
