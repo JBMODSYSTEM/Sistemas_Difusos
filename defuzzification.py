@@ -133,3 +133,13 @@ def evaluar_grupo_reglas(reglas, grados_comida, grados_servicio):
     if not activaciones:
         return 0.0
     return max(activaciones)
+
+# Funcion que evalua y agrupa las 25 reglas por salida difusa. y devuelve un diccionario con la activacion de cada etiqueta de propina.
+def evaluar_reglas(grados_comida, grados_servicio):
+    return {
+        "nada": evaluar_grupo_reglas(REGLAS_NADA, grados_comida, grados_servicio),
+        "poca": evaluar_grupo_reglas(REGLAS_POCA, grados_comida, grados_servicio),
+        "regular": evaluar_grupo_reglas(REGLAS_REGULAR, grados_comida, grados_servicio),
+        "buena": evaluar_grupo_reglas(REGLAS_BUENA, grados_comida, grados_servicio),
+        "excelente": evaluar_grupo_reglas(REGLAS_EXCELENTE, grados_comida, grados_servicio),
+    }
