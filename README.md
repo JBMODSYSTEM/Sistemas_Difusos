@@ -373,6 +373,4 @@ Este proyecto implementa cuatro tipos diferentes de funciones de pertenencia, pe
 - **Gaussiana**: Suave, natural y con transiciones graduales.
 - **Campana generalizada**: Flexible y adaptable a diferentes formas.
 
-El programa permite evaluar todos estos tipos simultáneamente sobre los mismos valores de entrada, facilitando la comparación y el aprendizaje sobre funciones de pertenencia difusas.#   S i s t e m a s _ D i f u s o s 
- 
- 
+El programa permite evaluar todos estos tipos simultáneamente sobre los mismos valores de entrada, facilitando la comparación y el aprendizaje sobre funciones de pertenencia difusas.
