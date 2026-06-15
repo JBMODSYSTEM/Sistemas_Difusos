@@ -117,3 +117,19 @@ VALORES_SALIDA = {
 }
 
 
+# Devuelve la etiqueta de propina para una combinacion dada.
+def obtener_propina(calidad_comida, calidad_servicio):
+    return TABLA_PROPINAS[calidad_comida][calidad_servicio]
+
+# Calcula la fuerza de una regla usando producto entre antecedentes.
+def evaluar_regla(comida, servicio, grados_comida, grados_servicio):
+    return grados_comida[comida] * grados_servicio[servicio]
+
+# Devuelve la activacion maxima de un grupo de reglas de salida.
+def evaluar_grupo_reglas(reglas, grados_comida, grados_servicio):
+    activaciones = []
+    for _, comida, servicio in reglas:
+        activaciones.append(evaluar_regla(comida, servicio, grados_comida, grados_servicio))
+    if not activaciones:
+        return 0.0
+    return max(activaciones)
