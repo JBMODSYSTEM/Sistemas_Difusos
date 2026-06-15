@@ -169,3 +169,30 @@ def defuzzificar_por_promedio_ponderado(agregados, valores_salida = None):
     # valor_nitido = sum(valor_salida_i * grado_i) / sum(grado_i)
     return numerador / denominador
 
+
+# Función principal que integra la evaluación de reglas y la defuzzificación para 
+# obtener el valor nitido de propina basado en los grados de activación de comida y servicio.   
+def inferir_y_defuzzificar(grados_comida, grados_servicio, valores_salida = None):
+    # Evaluamos las reglas para obtener los grados de activación de cada etiqueta de propina.
+    resultados_reglas = evaluar_reglas(grados_comida, grados_servicio)
+    # Calculamos el valor nitido usando un promedio ponderado de salidas singleton.
+    nitido = defuzzificar_por_promedio_ponderado(resultados_reglas, valores_salida)
+    # Devolvemos tanto los grados de activación de cada etiqueta de propina como el valor nitido resultante.
+    return resultados_reglas, nitido
+
+# Función para imprimir los resultados de los grados de activación y el valor nitido de propina recomendado.
+def imprimir_resultados(resultados_reglas, nitido):
+    print("\nGrados de activación para cada etiqueta de propina:")
+    for etiqueta, grado in resultados_reglas.items():
+        print(f"  {etiqueta}: {grado:.4f}")
+    print(f"\nValor nitido de propina recomendado: {nitido:.4f}")
+
+
+if __name__ == "__main__":
+    # Ejemplo de uso: se pueden definir grados de activación para comida y servicio, luego inferir y defuzzificar para obtener la propina recomendada.
+    grados_comida = {"mmc": 0.1, "mc": 0.5, "rc": 0.8, "bc": 0.3, "mbc": 0.1}
+    grados_servicio = {"mms": 0.1, "ms": 0.4, "rs": 0.7, "bs": 0.5, "mbs": 0.2}
+
+    # Evaluamos las reglas y obtenemos el valor nitido de propina recomendado.
+    resultados_reglas, nitido = inferir_y_defuzzificar(grados_comida, grados_servicio)
+    imprimir_resultados(resultados_reglas, nitido)
