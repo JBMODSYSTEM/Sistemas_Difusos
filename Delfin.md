@@ -141,7 +141,7 @@ Este sistema contiene 25 reglas en total, agrupadas por la salida que producen.
 La tabla `TABLA_PROPINAS` guarda la salida lingüística resultante de cada combinación de comida y servicio.
 
 | Comida \ Servicio | mms | ms | rs | bs | mbs |
-|-|-|-|-|-|-|
+|---|---|---|---|---|---|
 | mmc | n | n | p | p | p |
 | mc  | n | n | p | p | r |
 | rc  | n | n | p | r | r |
