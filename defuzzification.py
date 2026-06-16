@@ -134,14 +134,20 @@ class Defuzzification:
 		# Validamos que las entradas sean válidas, que existan en la tabla de propinas.
         return TABLA_PROPINAS[calidad_comida][calidad_servicio]
     
-
+	# Creamos un static method para evaluar una regla difusa específica, 
+	# que toma la calidad de comida y servicio,y los grados de pertenencia 
+	# para cada uno, y devuelve el grado de activación de la regla, que se 
+	# calcula multiplicando los grados de pertenencia de la comida y el servicio.
     @staticmethod
     def evaluar_regla(comida, servicio, grados_comida, grados_servicio):
         # Esta función evalúa una regla difusa específica, tomando la calidad de comida y servicio,
 		# y los grados de pertenencia para cada uno, y devuelve el grado de activación de la regla.
         return grados_comida[comida] * grados_servicio[servicio]
     
-
+	# Esta función evalúa un grupo de reglas para una etiqueta de propina específica,
+	# tomando los grados de pertenencia de la comida y el servicio, y devuelve el 
+	# grado de activación máximo entre las reglas del grupo, que se calcula evaluando 
+	# cada regla y tomando el máximo grado de activación obtenido.
     def evaluar_grupo_reglas(self, reglas, grados_comida, grados_servicio):
         
 		# Creamos una lista para almacenar los grados de activación de cada regla en el grupo.
@@ -227,4 +233,10 @@ class Defuzzification:
     	# Retornamos tanto los resultados de las reglas como el valor nítido de la propina recomendada.
         return resultados_reglas, nitido
         
-        
+
+    @staticmethod
+    def imprimir_resultados(resultados_reglas, valor_nitido):
+        print("Grados de activación para cada etiqueta de propina:")
+        for etiqueta, grado in resultados_reglas.items():
+            print(f"  {etiqueta}: {grado:.4f}")
+        print(f"Valor nítido de la propina recomendada: {valor_nitido:.4f}")
