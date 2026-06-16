@@ -208,6 +208,23 @@ class Defuzzification:
         if denominador == 0.0:
             return 0.0  # Retornamos 0.0 para evitar división por cero.
         
-
         return numerador / denominador  # Retornamos el resultado del promedio ponderado, que es el valor nítido de la propina recomendada.	
-    
+
+
+	# Esta función combina la inferencia de reglas y la defuzzificación en un solo paso, 
+	# tomando los grados de pertenencia de la comida y el servicio, evaluando las 
+	# reglas para obtener los grados de activación, y luego realizando la defuzzificación 
+	# para obtener el valor nítido de la propina recomendada.
+    def inferir_y_defuzzificar(self, grados_comida, grados_servicio, valores_salida = None):
+		
+		# Evaluamos las reglas para obtener los grados de activación.
+        resultados_reglas = self.evaluar_reglas(grados_comida, grados_servicio)
+        
+		# Realizamos la defuzzificación utilizando el método de promedio ponderado para 
+		# obtener el valor nítido de la propina recomendada.
+        nitido = self.defuzzificar_por_promedio_ponderado(resultados_reglas, valores_salida)
+        
+    	# Retornamos tanto los resultados de las reglas como el valor nítido de la propina recomendada.
+        return resultados_reglas, nitido
+        
+        
