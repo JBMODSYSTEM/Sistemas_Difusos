@@ -105,6 +105,42 @@ def mostrar_resultados_campana(funcion, nombre, valores):
 		print(f"  x = {valor:>5} -> pertenencia = {funcion.evaluar(valor):.2f}")
 
 
+# Configuraciones base para fuzzificar comida y servicio con campanas generalizadas.
+CONFIGURACION_CAMPANA_COMIDA = {
+	"mmc": (2.0, 0.0, 2.0),
+	"mc": (2.0, 2.5, 2.0),
+	"rc": (2.0, 5.0, 2.0),
+	"bc": (2.0, 7.5, 2.0),
+	"mbc": (2.0, 10.0, 2.0),
+}
+
+CONFIGURACION_CAMPANA_SERVICIO = {
+	"mms": (2.0, 0.0, 2.0),
+	"ms": (2.0, 2.5, 2.0),
+	"rs": (2.0, 5.0, 2.0),
+	"bs": (2.0, 7.5, 2.0),
+	"mbs": (2.0, 10.0, 2.0),
+}
+
+
+def fuzzificar_valor_campana(valor, configuracion):
+	"""Convierte un valor nítido en grados de pertenencia usando campanas."""
+
+	grados = {}
+	for etiqueta, parametros in configuracion.items():
+		funcion = FuncionPertenenciaCampanaGeneralizada(*parametros)
+		grados[etiqueta] = funcion.evaluar(valor)
+	return grados
+
+
+def fuzzificar_comida_servicio(valor_comida, valor_servicio):
+	"""Fuzzifica comida y servicio antes de enviarlos al sistema de propinas."""
+
+	grados_comida = fuzzificar_valor_campana(valor_comida, CONFIGURACION_CAMPANA_COMIDA)
+	grados_servicio = fuzzificar_valor_campana(valor_servicio, CONFIGURACION_CAMPANA_SERVICIO)
+	return grados_comida, grados_servicio
+
+
 class FuncionPertenenciaSigmoidal:
 	"""Representando una función de pertenencia sigmoidal."""
 	

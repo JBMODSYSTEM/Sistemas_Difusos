@@ -1,5 +1,7 @@
 """Base de 25 reglas difusas para el problema de propinas."""
 
+from main import fuzzificar_comida_servicio
+
 # Calidad de la comida (CC) y calidad del servicio (CS) son las variables de entrada.
 CALIDAD = {
 	"CC": "Calidad de la Comida",
@@ -118,135 +120,136 @@ VALORES_SALIDA = {
 
 
 class Defuzzification:
-    """Esta será la clase para el sistema difuso de propinas, que implementará la lógica de defuzzificación."""
-    
-    # Inicializamos la clase con los valores de salida para cada etiqueta de propina, 
-	# que se pueden personalizar o usar los valores por defecto.
-    def __init__(self, valores_salida = None):
-        # Si no se proporcionan valores de salida personalizados, 
-		# usamos los valores por defecto definidos en VALORES_SALIDA.
-        self.valores_salida = valores_salida or VALORES_SALIDA
-    
-	
-	# Esta función toma la calidad de la comida y del servicio como 
-	# entrada, obtiene la etiqueta de propina correspondiente
-    def obtener_propina(self, calidad_comida, calidad_servicio):
-		# Validamos que las entradas sean válidas, que existan en la tabla de propinas.
-        return TABLA_PROPINAS[calidad_comida][calidad_servicio]
-    
-	# Creamos un static method para evaluar una regla difusa específica, 
-	# que toma la calidad de comida y servicio,y los grados de pertenencia 
-	# para cada uno, y devuelve el grado de activación de la regla, que se 
-	# calcula multiplicando los grados de pertenencia de la comida y el servicio.
-    @staticmethod
-    def evaluar_regla(comida, servicio, grados_comida, grados_servicio):
-        # Esta función evalúa una regla difusa específica, tomando la calidad de comida y servicio,
-		# y los grados de pertenencia para cada uno, y devuelve el grado de activación de la regla.
-        return grados_comida[comida] * grados_servicio[servicio]
-    
-	# Esta función evalúa un grupo de reglas para una etiqueta de propina específica,
-	# tomando los grados de pertenencia de la comida y el servicio, y devuelve el 
-	# grado de activación máximo entre las reglas del grupo, que se calcula evaluando 
-	# cada regla y tomando el máximo grado de activación obtenido.
-    def evaluar_grupo_reglas(self, reglas, grados_comida, grados_servicio):
-        
-		# Creamos una lista para almacenar los grados de activación de cada regla en el grupo.
-        activaciones = []
-        
-        # Iteramos sobre cada regla en el grupo, evaluando su activación y almacenándola en la lista.
-        for _, comida, servicio in reglas:
-            # Evaluamos la regla usando la función evaluar_regla, que calcula el grado de 
-			# activación multiplicando los grados de pertenencia de la comida y el servicio.
-            activaciones.append(self.evaluar_regla(comida, servicio, grados_comida, grados_servicio))
-        
-		# Si no hay activaciones (lo que podría ocurrir si el grupo de reglas está vacío), 
-		# retornamos 0.0 para evitar errores.
-        if not activaciones:
-            return 0.0
-        return max(activaciones)  # Retornamos el grado de activación máximo entre las reglas del grupo.
-    
+	"""Esta será la clase para el sistema difuso de propinas, que implementará la lógica de defuzzificación."""
 
-	# Esta función evalúa todas las reglas para cada etiqueta de propina, 
-	# tomando los grados de pertenencia de la comida y el servicio, y devuelve un 
+	# Inicializamos la clase con los valores de salida para cada etiqueta de propina,
+	# que se pueden personalizar o usar los valores por defecto.
+	def __init__(self, valores_salida=None):
+		# Si no se proporcionan valores de salida personalizados,
+		# usamos los valores por defecto definidos en VALORES_SALIDA.
+		self.valores_salida = valores_salida or VALORES_SALIDA
+
+	# Esta función toma la calidad de la comida y del servicio como
+	# entrada, obtiene la etiqueta de propina correspondiente.
+	def obtener_propina(self, calidad_comida, calidad_servicio):
+		# Validamos que las entradas sean válidas, que existan en la tabla de propinas.
+		return TABLA_PROPINAS[calidad_comida][calidad_servicio]
+
+	# Creamos un static method para evaluar una regla difusa específica,
+	# que toma la calidad de comida y servicio, y los grados de pertenencia
+	# para cada uno, y devuelve el grado de activación de la regla, que se
+	# calcula multiplicando los grados de pertenencia de la comida y el servicio.
+	@staticmethod
+	def evaluar_regla(comida, servicio, grados_comida, grados_servicio):
+		# Esta función evalúa una regla difusa específica, tomando la calidad de comida y servicio,
+		# y los grados de pertenencia para cada uno, y devuelve el grado de activación de la regla.
+		return grados_comida[comida] * grados_servicio[servicio]
+
+	# Esta función evalúa un grupo de reglas para una etiqueta de propina específica,
+	# tomando los grados de pertenencia de la comida y el servicio, y devuelve el
+	# grado de activación máximo entre las reglas del grupo, que se calcula evaluando
+	# cada regla y tomando el máximo grado de activación obtenido.
+	def evaluar_grupo_reglas(self, reglas, grados_comida, grados_servicio):
+
+		# Creamos una lista para almacenar los grados de activación de cada regla en el grupo.
+		activaciones = []
+
+		# Iteramos sobre cada regla en el grupo, evaluando su activación y almacenándola en la lista.
+		for _, comida, servicio in reglas:
+			# Evaluamos la regla usando la función evaluar_regla, que calcula el grado de
+			# activación multiplicando los grados de pertenencia de la comida y el servicio.
+			activaciones.append(self.evaluar_regla(comida, servicio, grados_comida, grados_servicio))
+
+		# Si no hay activaciones (lo que podría ocurrir si el grupo de reglas está vacío),
+		# retornamos 0.0 para evitar errores.
+		if not activaciones:
+			return 0.0
+		return max(activaciones)  # Retornamos el grado de activación máximo entre las reglas del grupo.
+
+	# Esta función evalúa todas las reglas para cada etiqueta de propina,
+	# tomando los grados de pertenencia de la comida y el servicio, y devuelve un
 	# diccionario con el grado de activación para cada etiqueta de propina.
-    def evaluar_reglas(self, grados_comida, grados_servicio):
-        
+	def evaluar_reglas(self, grados_comida, grados_servicio):
+
 		# Creamos un diccionario para almacenar los grados de activación para cada etiqueta de propina,
 		# evaluando cada grupo de reglas correspondiente a cada etiqueta.
-        return {
-            "nada": self.evaluar_grupo_reglas(REGLAS_NADA, grados_comida, grados_servicio),
-            "poca": self.evaluar_grupo_reglas(REGLAS_POCA, grados_comida, grados_servicio),
-            "regular": self.evaluar_grupo_reglas(REGLAS_REGULAR, grados_comida, grados_servicio),
+		return {
+			"nada": self.evaluar_grupo_reglas(REGLAS_NADA, grados_comida, grados_servicio),
+			"poca": self.evaluar_grupo_reglas(REGLAS_POCA, grados_comida, grados_servicio),
+			"regular": self.evaluar_grupo_reglas(REGLAS_REGULAR, grados_comida, grados_servicio),
 			"buena": self.evaluar_grupo_reglas(REGLAS_BUENA, grados_comida, grados_servicio),
 			"excelente": self.evaluar_grupo_reglas(REGLAS_EXCELENTE, grados_comida, grados_servicio),
 		}
-    
 
 	# Esta función realiza la defuzzificación utilizando el método de promedio ponderado,
-	# tomando los grados de activación para cada etiqueta de propina y los valores numéricos 
+	# tomando los grados de activación para cada etiqueta de propina y los valores numéricos
 	# correspondientes, y devuelve el valor nítido de la propina recomendada.
-    def defuzzificar_por_promedio_ponderado(self, grados, valores_salida = None):
-        # Calcularemos el valor nitido de la propina utilizando el método de promedio ponderado, 
-		# multiplicando cada grado de activación por su valor numérico 
+	def defuzzificar_por_promedio_ponderado(self, grados, valores_salida=None):
+		# Calcularemos el valor nitido de la propina utilizando el método de promedio ponderado,
+		# multiplicando cada grado de activación por su valor numérico
 		# correspondiente y sumando los resultados.
-        
-		# Si no se proporcionan valores de salida personalizados, usamos los valores por defecto.
-        if valores_salida is None:
-            valores_salida = self.valores_salida
-        
-		# Inicializamos el numerador y denominador para el cálculo del promedio ponderado.
-        # Numerador = sum(grado_activacion * valor_salida) para cada etiqueta de propina.
-        numerador = 0.0
-        # Denominador = sum(grado_activacion) para cada etiqueta de propina, 
-		# que se usará para normalizar el resultado.
-        denominador = 0.0
 
-        # Iteramos sobre cada etiqueta de propina y su grado de activación,
+		# Si no se proporcionan valores de salida personalizados, usamos los valores por defecto.
+		if valores_salida is None:
+			valores_salida = self.valores_salida
+
+		# Inicializamos el numerador y denominador para el cálculo del promedio ponderado.
+		# Numerador = sum(grado_activacion * valor_salida) para cada etiqueta de propina.
+		numerador = 0.0
+		# Denominador = sum(grado_activacion) para cada etiqueta de propina,
+		# que se usará para normalizar el resultado.
+		denominador = 0.0
+
+		# Iteramos sobre cada etiqueta de propina y su grado de activación,
 		# multiplicando el grado de activación por el valor numérico correspondiente y sumando al numerador,
 		# y sumando el grado de activación al denominador.
-        for etiqueta, grado in grados.items():
-            valor_salida = valores_salida[etiqueta]
-            numerador += grado * valor_salida
-            denominador += grado
-        
+		for etiqueta, grado in grados.items():
+			valor_salida = valores_salida[etiqueta]
+			numerador += grado * valor_salida
+			denominador += grado
+
 		# Si el denominador es cero (lo que podría ocurrir si no hay activaciones),
 		# retornamos 0.0 para evitar división por cero, lo que indica que no se recomienda ninguna propina.
-        if denominador == 0.0:
-            return 0.0  # Retornamos 0.0 para evitar división por cero.
-        
-        return numerador / denominador  # Retornamos el resultado del promedio ponderado, que es el valor nítido de la propina recomendada.	
+		if denominador == 0.0:
+			return 0.0  # Retornamos 0.0 para evitar división por cero.
 
+		return numerador / denominador  # Retornamos el resultado del promedio ponderado, que es el valor nítido de la propina recomendada.
 
-	# Esta función combina la inferencia de reglas y la defuzzificación en un solo paso, 
-	# tomando los grados de pertenencia de la comida y el servicio, evaluando las 
-	# reglas para obtener los grados de activación, y luego realizando la defuzzificación 
+	# Esta función combina la inferencia de reglas y la defuzzificación en un solo paso,
+	# tomando los grados de pertenencia de la comida y el servicio, evaluando las
+	# reglas para obtener los grados de activación, y luego realizando la defuzzificación
 	# para obtener el valor nítido de la propina recomendada.
-    def inferir_y_defuzzificar(self, grados_comida, grados_servicio, valores_salida = None):
-		
-		# Evaluamos las reglas para obtener los grados de activación.
-        resultados_reglas = self.evaluar_reglas(grados_comida, grados_servicio)
-        
-		# Realizamos la defuzzificación utilizando el método de promedio ponderado para 
-		# obtener el valor nítido de la propina recomendada.
-        nitido = self.defuzzificar_por_promedio_ponderado(resultados_reglas, valores_salida)
-        
-    	# Retornamos tanto los resultados de las reglas como el valor nítido de la propina recomendada.
-        return resultados_reglas, nitido
-        
+	def inferir_y_defuzzificar(self, grados_comida, grados_servicio, valores_salida=None):
 
-	# Usamos static method para imprimir los resultados de la evaluación de las reglas y el valor 
-	# nítido de la propina recomendada, formateando la salida para que sea clara y fácil de 
-	# entender, mostrando los grados de activación para cada etiqueta de propina y el 
+		# Evaluamos las reglas para obtener los grados de activación.
+		resultados_reglas = self.evaluar_reglas(grados_comida, grados_servicio)
+
+		# Realizamos la defuzzificación utilizando el método de promedio ponderado para
+		# obtener el valor nítido de la propina recomendada.
+		nitido = self.defuzzificar_por_promedio_ponderado(resultados_reglas, valores_salida)
+
+		# Retornamos tanto los resultados de las reglas como el valor nítido de la propina recomendada.
+		return resultados_reglas, nitido
+
+	# Esta función recibe valores nítidos de comida y servicio, los fuzzifica con campanas
+	# y luego aplica la inferencia y la defuzzificación.
+	def inferir_y_defuzzificar_desde_entradas(self, valor_comida, valor_servicio, valores_salida=None):
+		grados_comida, grados_servicio = fuzzificar_comida_servicio(valor_comida, valor_servicio)
+		return self.inferir_y_defuzzificar(grados_comida, grados_servicio, valores_salida)
+
+	# Usamos static method para imprimir los resultados de la evaluación de las reglas y el valor
+	# nítido de la propina recomendada, formateando la salida para que sea clara y fácil de
+	# entender, mostrando los grados de activación para cada etiqueta de propina y el
 	# valor nítido calculado.
-    @staticmethod
-    def imprimir_resultados(resultados_reglas, valor_nitido):
-        print("Grados de activación para cada etiqueta de propina:")
-        
-		# Iteramos sobre cada etiqueta de propina y su grado de activación, imprimiendo el 
+	@staticmethod
+	def imprimir_resultados(resultados_reglas, valor_nitido):
+		print("Grados de activación para cada etiqueta de propina:")
+
+		# Iteramos sobre cada etiqueta de propina y su grado de activación, imprimiendo el
 		# resultado formateado con 4 decimales para mayor claridad.
-        for etiqueta, grado in resultados_reglas.items():
-            print(f"  {etiqueta}: {grado:.4f}")
-        print(f"Valor nítido de la propina recomendada: {valor_nitido:.4f}")
+		for etiqueta, grado in resultados_reglas.items():
+			print(f"  {etiqueta}: {grado:.4f}")
+		print(f"Valor nítido de la propina recomendada: {valor_nitido:.4f}")
         
 
 if __name__ == "__main__":
@@ -263,12 +266,10 @@ if __name__ == "__main__":
 	# # Imprimimos los resultados obtenidos.
 	# defuzz.imprimir_resultados(resultados_reglas, valor_nitido)
     
-	# Otro ejemplo con diferentes grados de pertenencia para la calidad de la comida y el servicio,
-	# para mostrar cómo varían los resultados de la propina recomendada.
-	grados_comida = {"mmc": 0.1, "mc": 0.5, "rc": 0.8, "bc": 0.3, "mbc": 0.1}
-	grados_servicio = {"mms": 0.1, "ms": 0.4, "rs": 0.7, "bs": 0.5, "mbs": 0.2}
-    
-	# Realizamos la inferencia y defuzzificación para obtener 
-	# los resultados con los nuevos grados de pertenencia.
-	resultados_reglas, valor_nitido = Defuzzification().inferir_y_defuzzificar(grados_comida, grados_servicio)
+	# Ejemplo con entradas nítidas: primero se fuzzifican con campanas y luego se defuzzifica.
+	valor_comida = 6.5
+	valor_servicio = 7.8
+
+	# Realizamos la inferencia y defuzzificación a partir de las entradas nítidas.
+	resultados_reglas, valor_nitido = Defuzzification().inferir_y_defuzzificar_desde_entradas(valor_comida, valor_servicio)
 	Defuzzification.imprimir_resultados(resultados_reglas, valor_nitido)
