@@ -2,39 +2,39 @@
 
 ## Documentación de `defuzzification.py`
 
-En este archivo documento el sistema difuso usado para calcular la propina recomendada a partir de dos entradas:
+Este documento explica la clase principal `Defuzzification` y el sistema difuso que implementa para recomendar una propina a partir de dos entradas:
 
-- `calidad_comida`
-- `calidad_servicio`
+- calidad de la comida
+- calidad del servicio
 
-El objetivo de este módulo es aplicar reglas difusas, agrupar la activación de cada salida y convertir ese resultado difuso en un valor numérico final, también llamado `crisp` o valor nítido.
+El propósito del módulo es aplicar reglas difusas, agrupar la activación de las salidas y convertir ese resultado en un valor numérico final o `crisp`.
 
 ---
 
-## 1. Tecnologías y enfoque utilizado
+## 1. Tecnologías y enfoque
 
 ### Lenguaje
 - Python
 
-### El enfoque metodológico
+### Técnica utilizada
 - Lógica difusa
-- Inferencia por reglas tipo Mamdani simplificada
+- Inferencia por reglas
 - Agregación por máximo (`max`)
-- Evaluación de antecedentes mediante producto
+- Antecedentes evaluados con producto
 - Defuzzificación por promedio ponderado
 
-### La idea general
-El programa no trabaja con respuestas binarias de sí o no. En su lugar, asigna grados de pertenencia entre `0.0` y `1.0` a cada etiqueta difusa y luego combina esos grados para obtener una propina final más realista.
+### Idea general
+El sistema no responde con valores absolutos de sí o no. Trabaja con grados de pertenencia entre `0.0` y `1.0`, lo que permite una recomendación más realista y gradual.
 
 ---
 
-## 2. Qué problema resuelve
+## 2. Qué resuelve el software
 
-COn este sistema buscamos responder a la pregunta:
+El sistema responde a esta pregunta:
 
 > ¿Qué propina se recomienda según la calidad de la comida y del servicio?
 
-Para eso usamos cinco posibles salidas difusas:
+Las salidas posibles son:
 
 - `nada`
 - `poca`
@@ -42,17 +42,15 @@ Para eso usamos cinco posibles salidas difusas:
 - `buena`
 - `excelente`
 
-Cada salida se activa con distintas reglas según la combinación de comida y servicio.
+Cada una se activa con un grupo específico de reglas.
 
 ---
 
-## 3. Variables lingüísticas del sistema
+## 3. Estructura de datos del módulo
 
-### Entradas
+### Entradas lingüísticas
 
 #### Calidad de la comida
-Representada en el código por las etiquetas:
-
 - `mmc` = muy mala comida
 - `mc` = mala comida
 - `rc` = regular comida
@@ -60,19 +58,13 @@ Representada en el código por las etiquetas:
 - `mbc` = muy buena comida
 
 #### Calidad del servicio
-Representada por:
-
 - `mms` = muy mal servicio
 - `ms` = mal servicio
 - `rs` = regular servicio
 - `bs` = buen servicio
 - `mbs` = muy buen servicio
 
-### Salidas
-
-#### Propinas
-Representadas por:
-
+### Salidas lingüísticas
 - `n` = nada
 - `p` = poca
 - `r` = regular
@@ -81,80 +73,52 @@ Representadas por:
 
 ---
 
-## 4. Estructura general del archivo
+## 4. Clase principal
 
-El archivo `defuzzification.py` lo organicé de esta manera:
+La clase principal del sistema es `Defuzzification`.
 
-1. Definición de las reglas difusas.
-2. Tabla de propinas para consultar combinaciones directas.
-3. Valores numéricos de salida para defuzzificación.
-4. Funciones de evaluación de reglas.
-5. Función de defuzzificación por promedio ponderado.
-6. Función principal de inferencia.
-7. Impresión de resultados en consola.
+### Responsabilidad de la clase
+Encapsula toda la lógica del sistema difuso:
 
----
+1. consulta de la tabla de propinas
+2. evaluación de reglas
+3. agrupación por salida
+4. defuzzificación por promedio ponderado
+5. impresión de resultados
 
-## 5. Reglas difusas
+### Constructor
+#### `__init__(self, valores_salida=None)`
+Inicializa la clase con los valores numéricos de salida.
 
-Este sistema contiene 25 reglas en total, agrupadas por la salida que producen.
-
-### 5.1 Reglas para `nada`
-- `R1 = mmc * mms`
-- `R2 = mmc * ms`
-- `R3 = mc * mms`
-- `R4 = mc * ms`
-- `R5 = rc * mms`
-- `R6 = rc * ms`
-
-### 5.2 Reglas para `poca`
-- `R7 = mmc * rs`
-- `R8 = mmc * bs`
-- `R9 = mmc * mbs`
-- `R10 = mc * rs`
-- `R11 = mc * bs`
-- `R12 = rc * rs`
-- `R13 = bc * mms`
-- `R14 = bc * ms`
-- `R15 = mbc * mms`
-
-### 5.3 Reglas para `regular`
-- `R16 = mc * mbs`
-- `R17 = rc * bs`
-- `R18 = rc * mbs`
-- `R19 = bc * rs`
-- `R20 = bc * bs`
-- `R21 = mbc * ms`
-- `R22 = mbc * rs`
-
-### 5.4 Reglas para `buena`
-- `R23 = bc * mbs`
-- `R24 = mbc * bs`
-
-### 5.5 Reglas para `excelente`
-- `R25 = mbc * mbs`
+Si no se recibe un diccionario personalizado, la clase usa `VALORES_SALIDA`.
 
 ---
 
-## 6. Tabla de propinas
+## 5. Constantes del archivo
 
-La tabla `TABLA_PROPINAS` guarda la salida lingüística resultante de cada combinación de comida y servicio.
+### `REGLAS_NADA`
+Agrupa las reglas que activan la salida `nada`.
 
-| Comida \ Servicio | mms | ms | rs | bs | mbs |
-|---|---|---|---|---|---|
-| mmc | n | n | p | p | p |
-| mc  | n | n | p | p | r |
-| rc  | n | n | p | r | r |
-| bc  | p | p | r | r | b |
-| mbc | p | r | r | b | e |
+### `REGLAS_POCA`
+Agrupa las reglas que activan la salida `poca`.
 
-Con esta tabla se resume la lógica del sistema y permite analizar rápidamente qué salida se asocia a cada combinación.
+### `REGLAS_REGULAR`
+Agrupa las reglas que activan la salida `regular`.
 
----
+### `REGLAS_BUENA`
+Agrupa las reglas que activan la salida `buena`.
 
-## 7. Valores de salida para defuzzificación
+### `REGLAS_EXCELENTE`
+Agrupa las reglas que activan la salida `excelente`.
 
-Ya que la defuzzificación necesita convertir cada etiqueta lingüística en un valor numérico. Utilizamos `VALORES_SALIDA` con este fin y quedá de la siguiente manera.
+### `REGLAS_POR_SALIDA`
+Diccionario que organiza todas las reglas por clase de salida.
+
+### `TABLA_PROPINAS`
+Tabla que relaciona cada combinación de comida y servicio con la etiqueta de propina correspondiente.
+
+### `VALORES_SALIDA`
+Diccionario con los valores numéricos usados para defuzzificar:
 
 - `nada` = `0.0`
 - `poca` = `2.5`
@@ -162,19 +126,19 @@ Ya que la defuzzificación necesita convertir cada etiqueta lingüística en un 
 - `buena` = `7.5`
 - `excelente` = `10.0`
 
-Estos valores funcionan como puntos representativos de cada etiqueta.
-
 ---
 
-## 8. Métodos y funciones del archivo
+## 6. Métodos de `Defuzzification`
 
 ### `obtener_propina(calidad_comida, calidad_servicio)`
-Devuelve la etiqueta de propina que corresponde a una combinación específica de comida y servicio.
+Devuelve la etiqueta de propina asociada a una combinación concreta de comida y servicio.
 
 #### Ejemplo
 ```python
-obtener_propina("mc", "bs")
+defuzz = Defuzzification()
+defuzz.obtener_propina("mc", "bs")
 ```
+
 Resultado:
 ```python
 "p"
@@ -183,37 +147,31 @@ Resultado:
 ---
 
 ### `evaluar_regla(comida, servicio, grados_comida, grados_servicio)`
-Calcula la fuerza de una regla difusa.
+Calcula la activación de una regla difusa individual.
 
-#### Lógica usada
-En esta implementación se multiplica el grado de pertenencia de la comida por el grado de pertenencia del servicio:
-
+#### Fórmula usada
 $$
-\text{fuerza} = \mu_{comida} \times \mu_{servicio}
+fuerza = \mu_{comida} \times \mu_{servicio}
 $$
 
-Significa que mientras más altos sean ambos valores, mayor será la activación de la regla.
+Esto significa que la regla se activa más cuando ambos antecedentes tienen grados altos.
 
 ---
 
 ### `evaluar_grupo_reglas(reglas, grados_comida, grados_servicio)`
-Evalúa un grupo de reglas y devuelve la activación máxima de ese grupo.
+Evalúa todas las reglas de un grupo y devuelve la mayor activación del grupo.
 
-#### Método usado
-- Recorre todas las reglas del grupo.
-- Calcula la fuerza de cada una.
-- Devuelve el valor más alto con `max()`.
-
-Debido a que después de evaluar todas las reglas que producen una misma salida nos interesa conservar la activación más fuerte.
+#### Proceso
+1. Recorre cada regla del grupo.
+2. Calcula su fuerza con producto.
+3. Conserva la activación más alta con `max()`.
 
 ---
 
 ### `evaluar_reglas(grados_comida, grados_servicio)`
-Agrupamos las 25 reglas por salida y  nos devuelve un diccionario con la activación de cada propina.
+Evalúa los cinco grupos de reglas y devuelve un diccionario con la activación final de cada salida.
 
-#### Resultado esperado
-Devuelve una estructura como esta:
-
+#### Estructura devuelta
 ```python
 {
     "nada": 0.4,
@@ -224,101 +182,103 @@ Devuelve una estructura como esta:
 }
 ```
 
-Cada clave corresponde a una salida difusa y cada valor es su grado de activación.
-
 ---
 
-### `defuzzificar_por_promedio_ponderado(agregados, valores_salida=None)`
-Convierte la salida difusa en un valor nítido usando promedio ponderado.
+### `defuzzificar_por_promedio_ponderado(grados, valores_salida=None)`
+Convierte el resultado difuso en un valor numérico final.
 
 #### Fórmula
 $$
-crisp = \frac{\sum (valor\_salida_i \times grado_i)}{\sum grado_i}
+crisp = \frac{\sum(valor\_salida_i \times grado_i)}{\sum grado_i}
 $$
 
-#### Explicación
-- `valor_salida_i` es el valor numérico de cada etiqueta difusa.
-- `grado_i` es el grado de activación de esa etiqueta.
-- El numerador suma los productos entre ambos.
-- El denominador suma todos los grados activados.
+#### Interpretación
+- `valor_salida_i` es el valor numérico de cada propina.
+- `grado_i` es la activación de esa propina.
+- El numerador suma los productos.
+- El denominador suma las activaciones totales.
 
-Si el denominador es `0.0`, la función devuelve `0.0` para evitar división entre cero.
+Si no hay activaciones, retorna `0.0` para evitar división entre cero.
 
 ---
 
 ### `inferir_y_defuzzificar(grados_comida, grados_servicio, valores_salida=None)`
-Es la función principal del módulo.
+Integra todo el flujo de cálculo.
 
-#### Hace tres pasos:
+#### Hace tres cosas
 1. Evalúa las reglas.
-2. Agrupa los resultados por salida.
-3. Defuzzifica para obtener el valor nítido final.
+2. Agrupa las activaciones por salida.
+3. Calcula el valor nítido final.
 
 #### Devuelve
-- `resultados_reglas`: activación de `nada`, `poca`, `regular`, `buena` y `excelente`
-- `nitido`: valor final recomendado de propina
+- `resultados_reglas`
+- `nitido`
 
 ---
 
-### `imprimir_resultados(resultados_reglas, nitido)`
-Muestra en consola los grados de activación de cada salida y el valor nítido final.
-
-Esta función sirve para ver el resultado de la inferencia de forma clara y entendible.
+### `imprimir_resultados(resultados_reglas, valor_nitido)`
+Imprime en consola los grados de activación y el valor nítido final.
 
 ---
 
-## 9. Flujo de ejecución del programa
+## 7. Funciones de compatibilidad
+
+Además de la clase, el archivo mantiene funciones de nivel módulo para no romper usos anteriores:
+
+- `obtener_propina(...)`
+- `evaluar_regla(...)`
+- `evaluar_grupo_reglas(...)`
+- `evaluar_reglas(...)`
+- `defuzzificar_por_promedio_ponderado(...)`
+- `inferir_y_defuzzificar(...)`
+- `imprimir_resultados(...)`
+
+También existe el alias `defuzzification = Defuzzification` para facilitar referencias externas.
+
+---
+
+## 8. Flujo de ejecución
 
 Cuando se ejecuta `defuzzification.py`, el proceso es el siguiente:
 
-1. Se definen grados de pertenencia para comida y servicio.
-2. Se evalúan las 25 reglas.
-3. Se agrupan las reglas por salida difusa.
-4. Se aplica defuzzificación por promedio ponderado.
-5. Se imprime el resultado final.
+1. Se crea una instancia de `Defuzzification`.
+2. Se definen grados de pertenencia para comida y servicio.
+3. Se evalúan las reglas.
+4. Se agrupan por salida difusa.
+5. Se aplica defuzzificación por promedio ponderado.
+6. Se imprimen los resultados.
 
 ---
 
-## 10. Ejemplo de uso
+## 9. Ejemplo de uso
 
-Incluimos un ejemplo directo al final:
+El archivo incluye este ejemplo al final:
 
 ```python
 grados_comida = {"mmc": 0.1, "mc": 0.5, "rc": 0.8, "bc": 0.3, "mbc": 0.1}
 grados_servicio = {"mms": 0.1, "ms": 0.4, "rs": 0.7, "bs": 0.5, "mbs": 0.2}
-```
 
-Luego se llama a:
-
-```python
-resultados_reglas, nitido = inferir_y_defuzzificar(grados_comida, grados_servicio)
-```
-
-Y finalmente se imprime:
-
-```python
-imprimir_resultados(resultados_reglas, nitido)
+resultados_reglas, valor_nitido = Defuzzification().inferir_y_defuzzificar(grados_comida, grados_servicio)
+Defuzzification.imprimir_resultados(resultados_reglas, valor_nitido)
 ```
 
 ---
 
-## 11. Qué significa `crisp`
+## 10. Qué significa `crisp`
 
-`crisp` o valor nítido es el resultado final de la defuzzificación.
+`crisp` o valor nítido es el número final que sale del proceso de defuzzificación.
 
-En otras palabras:
-- antes del proceso, el sistema maneja etiquetas difusas como `nada`, `poca` o `buena`
-- después del proceso, el sistema devuelve un número concreto que puede interpretarse como la propina recomendada
+En este proyecto representa la propina recomendada en una escala numérica.
 
 ---
 
-## 12. Resumen corto
+## 11. Resumen final
 
-Este módulo implementa un sistema difuso para calcular propinas usando:
+`defuzzification.py` implementa un sistema difuso para propinas usando:
 
-- 25 reglas difusas
-- agrupación por salida con `max`
-- evaluación de antecedentes con producto
-- defuzzificación por promedio ponderado
+- 25 reglas agrupadas por salida
+- producto para evaluar antecedentes
+- máximo para agregar reglas de una misma salida
+- promedio ponderado para obtener el valor final
 
-El resultado final es una propina numérica fácil de interpretar.
+La clase `Defuzzification` concentra toda la lógica principal y hace que el módulo sea más claro, reutilizable y fácil de extender.
