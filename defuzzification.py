@@ -234,9 +234,41 @@ class Defuzzification:
         return resultados_reglas, nitido
         
 
+	# Usamos static method para imprimir los resultados de la evaluación de las reglas y el valor 
+	# nítido de la propina recomendada, formateando la salida para que sea clara y fácil de 
+	# entender, mostrando los grados de activación para cada etiqueta de propina y el 
+	# valor nítido calculado.
     @staticmethod
     def imprimir_resultados(resultados_reglas, valor_nitido):
         print("Grados de activación para cada etiqueta de propina:")
+        
+		# Iteramos sobre cada etiqueta de propina y su grado de activación, imprimiendo el 
+		# resultado formateado con 4 decimales para mayor claridad.
         for etiqueta, grado in resultados_reglas.items():
             print(f"  {etiqueta}: {grado:.4f}")
         print(f"Valor nítido de la propina recomendada: {valor_nitido:.4f}")
+        
+
+if __name__ == "__main__":
+	# # Ejemplo de uso de la clase Defuzzification con grados de pertenencia de ejemplo para comida y servicio.
+	# defuzz = Defuzzification()
+	
+	# # Grados de pertenencia de ejemplo para la calidad de la comida y el servicio.
+	# grados_comida = {"mmc": 0.0, "mc": 0.2, "rc": 0.5, "bc": 0.8, "mbc": 1.0}
+	# grados_servicio = {"mms": 0.0, "ms": 0.3, "rs": 0.6, "bs": 0.9, "mbs": 1.0}
+	
+	# # Realizamos la inferencia y defuzzificación para obtener los resultados.
+	# resultados_reglas, valor_nitido = defuzz.inferir_y_defuzzificar(grados_comida, grados_servicio)
+	
+	# # Imprimimos los resultados obtenidos.
+	# defuzz.imprimir_resultados(resultados_reglas, valor_nitido)
+    
+	# Otro ejemplo con diferentes grados de pertenencia para la calidad de la comida y el servicio,
+	# para mostrar cómo varían los resultados de la propina recomendada.
+	grados_comida = {"mmc": 0.1, "mc": 0.5, "rc": 0.8, "bc": 0.3, "mbc": 0.1}
+	grados_servicio = {"mms": 0.1, "ms": 0.4, "rs": 0.7, "bs": 0.5, "mbs": 0.2}
+    
+	# Realizamos la inferencia y defuzzificación para obtener 
+	# los resultados con los nuevos grados de pertenencia.
+	resultados_reglas, valor_nitido = Defuzzification().inferir_y_defuzzificar(grados_comida, grados_servicio)
+	Defuzzification.imprimir_resultados(resultados_reglas, valor_nitido)
