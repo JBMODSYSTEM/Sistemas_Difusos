@@ -1,6 +1,11 @@
 """Base de 25 reglas difusas para el problema de propinas."""
 
-from main import fuzzificar_comida_servicio
+from main import (
+	fuzzificar_comida_servicio,
+	fuzzificar_comida_servicio_triangular,
+	fuzzificar_comida_servicio_trapezoidal,
+	fuzzificar_comida_servicio_grafica,
+)
 
 # Calidad de la comida (CC) y calidad del servicio (CS) son las variables de entrada.
 CALIDAD = {
@@ -231,11 +236,48 @@ class Defuzzification:
 		# Retornamos tanto los resultados de las reglas como el valor nítido de la propina recomendada.
 		return resultados_reglas, nitido
 
+	def _inferir_desde_entradas(self, valor_comida, valor_servicio, fuzzificador, valores_salida=None):
+		"""Aplica un fuzzificador y luego ejecuta la inferencia y defuzzificación."""
+
+		grados_comida, grados_servicio = fuzzificador(valor_comida, valor_servicio)
+		return self.inferir_y_defuzzificar(grados_comida, grados_servicio, valores_salida)
+
 	# Esta función recibe valores nítidos de comida y servicio, los fuzzifica con campanas
 	# y luego aplica la inferencia y la defuzzificación.
 	def inferir_y_defuzzificar_desde_entradas(self, valor_comida, valor_servicio, valores_salida=None):
-		grados_comida, grados_servicio = fuzzificar_comida_servicio(valor_comida, valor_servicio)
-		return self.inferir_y_defuzzificar(grados_comida, grados_servicio, valores_salida)
+		return self._inferir_desde_entradas(
+			valor_comida,
+			valor_servicio,
+			fuzzificar_comida_servicio_grafica,
+			valores_salida,
+		)
+
+	# Variante que usa la gráfica ajustada de la documentación para fuzzificar las entradas.
+	def inferir_y_defuzzificar_desde_entradas_grafica(self, valor_comida, valor_servicio, valores_salida=None):
+		return self._inferir_desde_entradas(
+			valor_comida,
+			valor_servicio,
+			fuzzificar_comida_servicio_grafica,
+			valores_salida,
+		)
+
+	# Variante que usa funciones triangulares para fuzzificar las entradas.
+	def inferir_y_defuzzificar_desde_entradas_triangular(self, valor_comida, valor_servicio, valores_salida=None):
+		return self._inferir_desde_entradas(
+			valor_comida,
+			valor_servicio,
+			fuzzificar_comida_servicio_triangular,
+			valores_salida,
+		)
+
+	# Variante que usa funciones trapezoidales para fuzzificar las entradas.
+	def inferir_y_defuzzificar_desde_entradas_trapezoidal(self, valor_comida, valor_servicio, valores_salida=None):
+		return self._inferir_desde_entradas(
+			valor_comida,
+			valor_servicio,
+			fuzzificar_comida_servicio_trapezoidal,
+			valores_salida,
+		)
 
 	# Usamos static method para imprimir los resultados de la evaluación de las reglas y el valor
 	# nítido de la propina recomendada, formateando la salida para que sea clara y fácil de
@@ -250,6 +292,19 @@ class Defuzzification:
 		for etiqueta, grado in resultados_reglas.items():
 			print(f"  {etiqueta}: {grado:.4f}")
 		print(f"Valor nítido de la propina recomendada: {valor_nitido:.4f}")
+
+
+def imprimir_seccion_resultados(titulo, resultados_reglas, valor_nitido):
+	print(f"\n{titulo}")
+	print("-" * len(titulo))
+	Defuzzification.imprimir_resultados(resultados_reglas, valor_nitido)
+
+
+def unir_grados_por_maximo(grados_a, grados_b):
+	"""Une dos diccionarios de grados difusos tomando el máximo por etiqueta."""
+
+	etiquetas = set(grados_a) | set(grados_b)
+	return {etiqueta: max(grados_a.get(etiqueta, 0.0), grados_b.get(etiqueta, 0.0)) for etiqueta in etiquetas}
         
 
 if __name__ == "__main__":
@@ -266,10 +321,19 @@ if __name__ == "__main__":
 	# # Imprimimos los resultados obtenidos.
 	# defuzz.imprimir_resultados(resultados_reglas, valor_nitido)
     
-	# Ejemplo con entradas nítidas: primero se fuzzifican con campanas y luego se defuzzifica.
+	# Ejemplo con entradas nítidas: se obtiene un único valor nítido uniendo triangular y trapezoidal.
 	valor_comida = 6.5
 	valor_servicio = 7.8
+	defuzz = Defuzzification()
 
-	# Realizamos la inferencia y defuzzificación a partir de las entradas nítidas.
-	resultados_reglas, valor_nitido = Defuzzification().inferir_y_defuzzificar_desde_entradas(valor_comida, valor_servicio)
-	Defuzzification.imprimir_resultados(resultados_reglas, valor_nitido)
+	# Fuzzificación con funciones triangulares y trapezoidales.
+	grados_comida_tri, grados_servicio_tri = fuzzificar_comida_servicio_triangular(valor_comida, valor_servicio)
+	grados_comida_trap, grados_servicio_trap = fuzzificar_comida_servicio_trapezoidal(valor_comida, valor_servicio)
+
+	# Unimos ambas representaciones difusas por máximo y calculamos un único resultado nítido.
+	grados_comida = unir_grados_por_maximo(grados_comida_tri, grados_comida_trap)
+	grados_servicio = unir_grados_por_maximo(grados_servicio_tri, grados_servicio_trap)
+	resultados_reglas, valor_nitido = defuzz.inferir_y_defuzzificar(grados_comida, grados_servicio)
+	imprimir_seccion_resultados("Resultados uniendo triangular y trapezoidal", resultados_reglas, valor_nitido)
+
+	# Se omite la salida de campana porque el resultado final ahora se calcula solo con la unión.

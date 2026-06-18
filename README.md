@@ -374,3 +374,106 @@ Este proyecto implementa cuatro tipos diferentes de funciones de pertenencia, pe
 - **Campana generalizada**: Flexible y adaptable a diferentes formas.
 
 El programa permite evaluar todos estos tipos simultáneamente sobre los mismos valores de entrada, facilitando la comparación y el aprendizaje sobre funciones de pertenencia difusas.
+
+---
+
+## Integración con sistema de propinas (fuzzificación → inferencia → defuzzificación)
+
+Se añadió integración para usar las funciones de pertenencia (incluida la campana generalizada)
+como etapa de fuzzificación previa a la evaluación de reglas y la defuzzificación en
+`defuzzification.py`. En la versión actual, el valor final se obtiene uniendo los grados
+triangulares y trapezoidales por máximo y luego aplicando una sola defuzzificación.
+
+Qué se agregó:
+
+- En `main.py`:
+	- `FuncionPertenenciaCampanaGeneralizada(a, b, c)` y helpers `fuzzificar_valor_campana` y
+	  `fuzzificar_comida_servicio` para convertir valores nítidos a grados de pertenencia usando campanas.
+	- `FuncionPertenenciaTriangular` y `FuncionPertenenciaTrapezoidal` con sus configuraciones de comida y servicio.
+	- `fuzzificar_comida_servicio_triangular` y `fuzzificar_comida_servicio_trapezoidal` para obtener los grados base.
+	- `fuzzificar_comida_servicio_grafica` como referencia visual de la forma dibujada a mano.
+- En `defuzzification.py`:
+	- Import de los fuzzificadores desde `main.py`.
+	- Unión por máximo de triangular y trapezoidal antes de evaluar las reglas.
+	- Un único valor nítido final impreso en consola.
+
+Ejecución recomendada (flujo extremo a extremo):
+
+Para obtener la propina a partir de valores nítidos de comida y servicio ejecuta:
+
+```bash
+python defuzzification.py
+```
+
+Salida de ejemplo verificada durante la integración:
+
+```
+Resultados uniendo triangular y trapezoidal
+-------------------------------------------
+Grados de activación para cada etiqueta de propina:
+	nada: 0.0000
+	poca: 0.0000
+	regular: 1.0000
+	buena: 0.3000
+	excelente: 0.0000
+Valor nítido de la propina recomendada: 5.5769
+```
+
+Uso programático (llamar desde otro módulo):
+
+```python
+from defuzzification import Defuzzification
+
+# Llamar con valores nítidos (ejemplo)
+# La salida actual unifica triangular y trapezoidal por máximo.
+resultados, nitido = Defuzzification().inferir_y_defuzzificar_desde_entradas(6.5, 7.8)
+Defuzzification.imprimir_resultados(resultados, nitido)
+```
+
+Notas:
+
+- La API previa que recibe grados de pertenencia sigue disponible para quien ya la usara.
+- Campana, triangular, trapezoidal y la gráfica ajustada siguen disponibles como referencia y comparación, pero el resultado mostrado por defecto es la unión triangular + trapezoidal.
+
+---
+
+## Actualización del código
+
+En la versión actual del proyecto, `main.py` y `defuzzification.py` cumplen papeles distintos pero conectados:
+
+### Qué hace `main.py`
+- Define las clases de funciones de pertenencia: triangular, trapezoidal, gaussiana, campana generalizada, sigmoidal, S, Z y Pi.
+- Agrega configuraciones base para transformar valores nítidos de comida y servicio en grados de pertenencia.
+- Incluye helpers de fuzzificación para tres estilos:
+	- campana generalizada
+	- triangular
+	- trapezoidal
+- Su responsabilidad es convertir una entrada numérica en un diccionario de grados difusos.
+
+### Qué hace `defuzzification.py`
+- Toma los grados de pertenencia generados por `main.py`.
+- Evalúa las 25 reglas difusas del sistema de propinas.
+- Agrupa las activaciones por salida: `nada`, `poca`, `regular`, `buena` y `excelente`.
+- Calcula la propina final por promedio ponderado.
+- Ahora puede mostrar en consola tres resultados independientes para el mismo par de entradas:
+	- usando campana generalizada
+	- usando función triangular
+	- usando función trapezoidal
+
+### Flujo completo
+1. Se toman dos valores nítidos: comida y servicio.
+2. `main.py` los fuzzifica con la forma elegida.
+3. `defuzzification.py` evalúa reglas y calcula el valor nítido final.
+4. La consola muestra cada resultado por separado, lo que permite comparar el efecto de cada función de pertenencia.
+
+### Ejemplo de uso actual
+```python
+from defuzzification import Defuzzification
+
+defuzz = Defuzzification()
+resultados_campana, nitido_campana = defuzz.inferir_y_defuzzificar_desde_entradas(6.5, 7.8)
+resultados_tri, nitido_tri = defuzz.inferir_y_defuzzificar_desde_entradas_triangular(6.5, 7.8)
+resultados_trap, nitido_trap = defuzz.inferir_y_defuzzificar_desde_entradas_trapezoidal(6.5, 7.8)
+```
+
+Con esto el proyecto ya no solo evalúa funciones de pertenencia por separado, sino que también permite comparar cómo cambia la propina recomendada según la forma de fuzzificación usada.

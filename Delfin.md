@@ -282,3 +282,71 @@ En este proyecto representa la propina recomendada en una escala numérica.
 - promedio ponderado para obtener el valor final
 
 La clase `Defuzzification` concentra toda la lógica principal y hace que el módulo sea más claro, reutilizable y fácil de extender.
+
+---
+
+## 12. Cambios recientes (integración de fuzzificación por campana)
+
+Se añadieron mejoras para permitir un flujo extremo a extremo desde entradas nítidas hasta la propina defuzzificada:
+
+- Se creó en `main.py` una implementación reutilizable de campanas generalizadas y helpers:
+    - `FuncionPertenenciaCampanaGeneralizada(a, b, c)` — función de pertenencia en forma de campana.
+    - `fuzzificar_valor_campana(valor, configuracion)` — genera los grados de pertenencia para una etiqueta.
+    - `fuzzificar_comida_servicio(valor_comida, valor_servicio)` — fuzzifica ambas entradas usando configuraciones base.
+
+- En `defuzzification.py` se agregó:
+    - Import de `fuzzificar_comida_servicio` desde `main.py`.
+    - Método `inferir_y_defuzzificar_desde_entradas(valor_comida, valor_servicio, ...)` que fuzzifica
+        las entradas nítidas y luego ejecuta la inferencia y la defuzzificación existentes.
+
+- Se mantiene la API previa (métodos y funciones de compatibilidad), por lo que el cambio es retrocompatible.
+
+## 13. Actualización del código
+
+La relación entre `main.py` y `defuzzification.py` quedó organizada de esta forma:
+
+### `main.py`
+- Contiene las clases de funciones de pertenencia.
+- Define las configuraciones para comida y servicio.
+- Convierte valores nítidos en grados difusos.
+- Soporta tres estilos de fuzzificación para este proyecto:
+    - campana generalizada
+    - triangular
+    - trapezoidal
+- También incluye la versión ajustada a la gráfica dibujada a mano, con hombros en los extremos y triángulos en el centro.
+
+### `defuzzification.py`
+- Recibe los grados generados por `main.py`.
+- Evalúa las 25 reglas difusas.
+- Agrupa el resultado por salida de propina.
+- Calcula un valor final nítido usando promedio ponderado.
+- Imprime un único resultado por consola cuando se unen triangular y trapezoidal por máximo.
+
+### Qué pasa al ejecutar el programa
+1. Se definen `valor_comida` y `valor_servicio`.
+2. `main.py` los transforma en grados de pertenencia.
+3. `defuzzification.py` une triangular y trapezoidal, aplica las reglas difusas y calcula el valor nítido final.
+4. La consola muestra un solo bloque con el resultado final.
+
+Esto hace visible cómo cambia la recomendación final al unir las dos formas de pertenencia principales.
+
+### Ejecución y verificación
+
+Puedes ejecutar el flujo integrado con:
+
+```bash
+python defuzzification.py
+```
+
+Salida de ejemplo verificada durante la integración:
+
+```
+Grados de activación para cada etiqueta de propina:
+    nada: 0.0151
+    poca: 0.1569
+    regular: 0.9407
+    buena: 0.3820
+    excelente: 0.0391
+Valor nítido de la propina recomendada: 5.4451
+```
+
